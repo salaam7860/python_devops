@@ -19,7 +19,8 @@ def sp_var(input_list):
 def cal(deadline):
     deadline_date = datetime.strptime(deadline, "%d.%m.%Y")
     today_date = datetime.today()
-    print(deadline_date - today_date)
+    calt = deadline_date - today_date
+    print(calt.days)
 
 user()
 
