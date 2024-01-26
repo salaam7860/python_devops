@@ -89,4 +89,3 @@ while True:
         print("Error:", error)
         time.sleep(2)
 
-# https://youtu.be/0sOvCWFmrtA?t=15117
