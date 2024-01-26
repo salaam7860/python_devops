@@ -74,7 +74,7 @@ def post_not_found(post, id):
 
 '''
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-DATABASE CODING STARTS FROM HERE 
+CONNECTING DATABBASE 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 '''
 
