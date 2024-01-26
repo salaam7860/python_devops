@@ -2,13 +2,12 @@ from fastapi import FastAPI, Response, status, HTTPException
 from fastapi.params import Body 
 from pydantic import BaseModel
 from typing import Optional
-from random import randrange
 import psycopg
 from psycopg.rows import dict_row
 import time
 app = FastAPI()
 
-# creatr a class and make a template for the user and bound him/her. Use the pydantic lib "All this is for validation purpose".
+# create a class and make a template for the user and bound him/her. Use the pydantic lib "All this is for validation purpose".
 
 class Post(BaseModel):
     title: str
@@ -30,7 +29,6 @@ def post():
 
 @app.post("/post", status_code=status.HTTP_201_CREATED) # when someone create a post status code will be generated 
 def create_post(post: Post):
-    # post_dict = post.dict() # post_dict["id"] = randrange(1, 100000) # my_post.append(post_dict)
     cursor.execute("""INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING * """,
                   (post.title, post.content, post.published))
     new_post = cursor.fetchone()
