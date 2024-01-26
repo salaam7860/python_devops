@@ -10,8 +10,6 @@ app = FastAPI()
 
 # creatr a class and make a template for the user and bound him/her. Use the pydantic lib "All this is for validation purpose".
 
-
-
 class Post(BaseModel):
     title: str
     content: str
@@ -24,16 +22,11 @@ class Post(BaseModel):
 def root():
     return {"message": "Welcome to the fastapi World!!"}
 
-# [{"title": "title of post 1", "content": "content of post 1", "id":1}, {"title": "favorite foods", "content": "I like pizza", "id": 2}]
-my_post = [{"title": "title of post 1", "content": "content of post 1", "id":1}, {"title": "favorite foods", "content": "I like pizza", "id": 2}]
-
-
 @app.get("/post")
 def post():
     cursor.execute("""SELECT * FROM posts""")
     posts = cursor.fetchall()
     return {"message": posts}
-
 
 @app.post("/post", status_code=status.HTTP_201_CREATED) # when someone create a post status code will be generated 
 def create_post(post: Post):
@@ -51,31 +44,6 @@ def get_post(id: int, response: Response):
     post = cursor.fetchone()
     post_not_found(post, id)   # Check if post is not found and raise HTTPException
     return {"post_detail": post}   
-
-# the below lines are the other way of or sloppy way of writing the code ######
-#response.status_code = status.HTTP_404_NOT_FOUND
-#return {"Message": f"Post with id {id} was not found"}
-        
-# Check if post is not found and raise HTTPException 
-def post_not_found(post, id):
-       if not post:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-                            detail=f"Post with id {id} was not found") 
-
-def find_post(id):
-    for p in my_post:
-        if p["id"] == id:
-            return p
-
-# Now delete a request 
-
-def find_index(id):
-    for i, p in enumerate(my_post):
-        if p["id"] == id:
-            return i
-
-
-    
 
 @app.delete("/post/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int):
@@ -97,17 +65,11 @@ def update_posts(id: int, post: Post):
     post_not_found(posts, id)   # Check if post is not found and raise HTTPException
     return {"data": posts}
 
-# Finding Index: 
-    # index = find_index(id)
-    # if index == None:
-    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with requested id: {id} doesn't exist.")
-
-# Creating Dictionary:
-    # post_dict = post.dict()
-# Updating ID: It explicitly sets the id key within the post_dict to the provided id value.
-    # post_dict["id"] = id
-# Assigning to List: it replaces the existing post at the found index in the my_post list with the updated post_dict.
-    # my_post[index] = post_dict
+# Check if post is not found and raise HTTPException 
+def post_not_found(post, id):
+       if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+                            detail=f"Post with id {id} was not found") 
     
 
 '''
