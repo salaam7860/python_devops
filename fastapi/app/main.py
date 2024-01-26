@@ -5,6 +5,11 @@ from typing import Optional
 import psycopg
 from psycopg.rows import dict_row
 import time
+from . import models
+from .database import engine
+
+models.Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
 
 # create a class and make a template for the user and bound him/her. Use the pydantic lib "All this is for validation purpose".
