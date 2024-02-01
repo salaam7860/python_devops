@@ -4,7 +4,7 @@ from .. import database, schemas, model, utils, oauth2
 
 router = APIRouter(tags=["Authencation"])
 
-@router.post("/login")
+@router.post("/login", response_model=schemas.Token)
 def login(user_credentials:schemas.UserLogin, db: Session=Depends(database.get_db)):
 
     # VERIFY THE USER PROVIDED EMAIL AND PASSWORD WITH THE DATABASE 
