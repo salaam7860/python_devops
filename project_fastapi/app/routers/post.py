@@ -20,14 +20,14 @@ CRUD OPERATIONS FOR POSTS MODULE
 # GET ALL POSTS 
 
 @router.get("/", response_model=List[schemas.Post])
-def get_posts(db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     posts = db.query(model.Post).all()
     return posts
 
 # GET A SINGLE POST BY AN ID
 
 @router.get("/{id}", response_model=schemas.Post)
-def get_post_id(id: int, db: Session=Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+def get_post_id(id: int, db: Session=Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     post = db.query(model.Post).filter(model.Post.id == id).first()
     errors.post_not_found(post, id) # Check if post is not found and raise HTTPException 
     return post
@@ -35,10 +35,11 @@ def get_post_id(id: int, db: Session=Depends(get_db), user_id: int = Depends(oau
 # CREATE A POST 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
-def create_posts(post: schemas.PostCreate, db: Session=Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+def create_posts(post: schemas.PostCreate, db: Session=Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+    
 
-    print(user_id) 
-    new_post = model.Post(**post.dict()) # **kwargs used.
+    print(current_user.id) 
+    new_post = model.Post(owner_id= current_user.id, **post.dict()) # **kwargs used.
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
@@ -47,7 +48,7 @@ def create_posts(post: schemas.PostCreate, db: Session=Depends(get_db), user_id:
 # DELETE A POST 
 
 @router.delete("/{id}")
-def delete_post(id: int, db: Session=Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+def delete_post(id: int, db: Session=Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     post_query = db.query(model.Post).filter(model.Post.id == id)
     post = post_query.first()
     errors.post_not_found(post, id) # Check if post is not found and raise HTTPException 
@@ -59,7 +60,7 @@ def delete_post(id: int, db: Session=Depends(get_db), user_id: int = Depends(oau
 # UPDATE A POST 
 
 @router.put("/{id}", response_model=schemas.Post)
-def update_posts(id: int,update_posts: schemas.PostCreate, db: Session=Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+def update_posts(id: int,update_posts: schemas.PostCreate, db: Session=Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     post_query = db.query(model.Post).filter(model.Post.id == id)
     post = post_query.first()
     errors.post_not_found(post, id) # Check if post is not found and raise HTTPException 

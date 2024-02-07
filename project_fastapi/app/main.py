@@ -21,5 +21,7 @@ app.include_router(post.router)
 app.include_router(user.router)
 app.include_router(auth.router)
 
-# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxNH0.G_HhwkIdtwtkP4lXuPryieLHCry099rIs6k97N8yZxI
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxNH0.0AZDlVQnncYoa91yVzI0_cmLVh4pZ76VpY9vi-zjlrQ
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxNCwiZXhwIjoxNzA3MTM2MTMwfQ.c8Kx6usyk6g60aqrX5pjiAHodrW7no-ev9Y931c1e8w
 
+# https://youtu.be/0sOvCWFmrtA?t=29220
