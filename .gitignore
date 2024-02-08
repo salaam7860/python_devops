@@ -4,3 +4,6 @@ fastapi/app/__pycache__/
 project_fastapi/project_lib
 project_fastapi/app/__pycache__
 project_fastapi/app/routers/__pycache__
+project_fastapi/.env
+
+

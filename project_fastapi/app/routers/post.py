@@ -20,8 +20,10 @@ CRUD OPERATIONS FOR POSTS MODULE
 # GET ALL POSTS 
 
 @router.get("/", response_model=List[schemas.Post])
-def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
-    posts = db.query(model.Post).all()
+def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user),
+ limit: int = 10, skip: int = 0, search: Optional[str] = ""):
+    print(search)
+    posts = db.query(model.Post).filter(model.Post.title.contains(search)).limit(limit).offset(skip).all()
     return posts
 
 # GET A SINGLE POST BY AN ID
@@ -40,6 +42,7 @@ def create_posts(post: schemas.PostCreate, db: Session=Depends(get_db), current_
 
     print(current_user.id) 
     new_post = model.Post(owner_id= current_user.id, **post.dict()) # **kwargs used.
+
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
@@ -53,6 +56,8 @@ def delete_post(id: int, db: Session=Depends(get_db), current_user: int = Depend
     post = post_query.first()
     errors.post_not_found(post, id) # Check if post is not found and raise HTTPException 
     #post.delete(synchronize_session=False) #NOT WORKED
+    if post.owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"you are not authorized to perform requested action")
     db.delete(post)  
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -64,6 +69,10 @@ def update_posts(id: int,update_posts: schemas.PostCreate, db: Session=Depends(g
     post_query = db.query(model.Post).filter(model.Post.id == id)
     post = post_query.first()
     errors.post_not_found(post, id) # Check if post is not found and raise HTTPException 
+
+
+    if post.owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"you are not authorized to perform requested action")
     post_query.update(update_posts.dict(), synchronize_session=False)
     db.commit()
     return  post_query.first()
