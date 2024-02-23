@@ -3,6 +3,7 @@ from .. import model, schemas, errors, utils, oauth2
 from typing import Optional, List
 from ..database import engine, get_db
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 router = APIRouter(
     prefix="/posts",
@@ -19,18 +20,27 @@ CRUD OPERATIONS FOR POSTS MODULE
 
 # GET ALL POSTS 
 
-@router.get("/", response_model=List[schemas.Post])
+@router.get("/", response_model=List[schemas.PostOut])
+
 def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user),
  limit: int = 10, skip: int = 0, search: Optional[str] = ""):
-    print(search)
-    posts = db.query(model.Post).filter(model.Post.title.contains(search)).limit(limit).offset(skip).all()
+   # posts = db.query(model.Post).filter(model.Post.title.contains(search)).limit(limit).offset(skip).all()
+
+    posts = db.query(model.Post, func.count(model.Vote.post_id).label("votes")).join(
+        model.Vote, model.Vote.post_id == model.Post.id, isouter=True).group_by(model.Post.id).filter(
+            model.Post.title.contains(search)).limit(limit).offset(skip).all()
+    
+
     return posts
 
 # GET A SINGLE POST BY AN ID
 
-@router.get("/{id}", response_model=schemas.Post)
+@router.get("/{id}", response_model=schemas.PostOut)
 def get_post_id(id: int, db: Session=Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
-    post = db.query(model.Post).filter(model.Post.id == id).first()
+    #post = db.query(model.Post).filter(model.Post.id == id).first()
+    post = db.query(model.Post, func.count(model.Vote.post_id).label("votes")).join(
+        model.Vote, model.Vote.post_id == model.Post.id, isouter=True).group_by(
+            model.Post.id).filter(model.Post.id == id).first()
     errors.post_not_found(post, id) # Check if post is not found and raise HTTPException 
     return post
 

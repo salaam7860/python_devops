@@ -18,4 +18,15 @@ app.include_router(auth.router)
 app.include_router(votes.router)
 
 
-# 
+'''
+select posts.*, users.email from posts left join users on posts.owner_id = users.id;
+
+select * from posts right join users on posts.owner_id = users.id;
+
+select users.id, users.email, count(posts.id) as user_post_count from posts right join users on posts.owner_id = users.id group by users.id;
+
+select posts.*, count(votes.post_id) from posts left join votes on posts.id = votes.post_id group by posts.id;
+'''
+
+
+# https://youtu.be/0sOvCWFmrtA?t=39119

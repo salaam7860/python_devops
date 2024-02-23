@@ -9,6 +9,12 @@ router = APIRouter(
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def votes(vote: schemas.Votes, db: Session = Depends(database.get_db), current_user: int = Depends(oauth2.get_current_user)):
+
+    # IF POST IS NOT AVAILABLE 
+    post = db.query(model.Post).filter(model.Post.id == vote.post_id).first()
+
+    if not post: 
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id: {vote.post_id} doesn't exist")
     
     #checking if the current user already voted on the specified post.
     vote_query = db.query(model.Vote).filter(model.Vote.post_id == vote.post_id, model.Vote.user_id == current_user.id)
@@ -33,6 +39,7 @@ def votes(vote: schemas.Votes, db: Session = Depends(database.get_db), current_u
         db.commit()
 
         return {"message": "successfully deleted vote"}
+
 
 
 
